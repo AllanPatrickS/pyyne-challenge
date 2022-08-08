@@ -26,6 +26,8 @@ public class Bank2Integration implements BankGateway {
     @Override
     public List<Transaction> getTransactions(Long accountId, Date fromDate, Date toDate) {
         List<Bank2AccountTransaction> transactions = bankSource.getTransactions(accountId, fromDate, toDate);
-        return transactions.stream().map(tnx -> new Transaction(tnx.getAmount(), tnx.getType().toString(), tnx.getText())).collect(Collectors.toList());
+        return transactions.stream()
+                .map(tnx -> new Transaction(tnx.getAmount(), tnx.getType().toString(), tnx.getText()))
+                .collect(Collectors.toList());
     }
 }

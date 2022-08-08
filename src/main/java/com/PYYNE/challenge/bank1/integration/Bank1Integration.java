@@ -30,7 +30,7 @@ public class Bank1Integration implements BankGateway {
                 tnx.getAmount(), convertType(tnx.getType()), tnx.getText())).collect(Collectors.toList());
     }
 
-    private String convertType(Integer type) {
+    public String convertType(Integer type) {
         return type == 1 ? "Credit" : "Debit";
     }
 }

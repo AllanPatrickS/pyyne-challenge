@@ -1,28 +1,27 @@
 package com.PYYNE.challenge.pyyne.challenge.bank.controller;
 
 import com.PYYNE.challenge.pyyne.challenge.bank.BankAdapter;
-import com.PYYNE.challenge.pyyne.challenge.bank.Transaction;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.containsString;
 
-import java.util.Date;
-import java.util.List;
-
-import static org.mockito.Mockito.when;
-
+@SpringBootTest
+@AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 public class BankControllerTests {
-    @Mock
+    @Autowired
     private MockMvc mockMvc;
     @Mock
     private BankAdapter adapter;
@@ -31,28 +30,24 @@ public class BankControllerTests {
 
     @Test
     void balancesShouldReturnTheBalancesList() throws Exception {
-        List<Double> balances = adapter.getBalances();
-        when(controller.printBalances()).thenReturn(balances);
-
         mockMvc.perform(get("/bank/balances")).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string(containsString(balances.toString())));
+                .andExpect(content().string(containsString("[215.5,512.5]")));
     }
 
     @Test
     void balanceShouldReturnTheBalance() throws Exception {
-        String balance = Double.toString(adapter.getBalance(0L));
-        when(controller.printBalance()).thenReturn(balance);
-
         mockMvc.perform(get("/bank/balance")).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string(containsString(balance)));
+                .andExpect(content().string(containsString("728.0")));
     }
 
     @Test
     void transactionsShouldReturnTheTransactionList() throws Exception {
-        List<Transaction> transactions = adapter.getTransactions(0L, new Date(), new Date());
-        when(controller.printTransactions()).thenReturn(transactions);
-
         mockMvc.perform(get("/bank/transactions")).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string(containsString(transactions.toString())));
+                .andExpect(content().string(containsString(
+                        "[{\"amount\":100.0,\"type\":\"Credit\",\"text\":\"Check deposit\"},{\"amount\":25.5," +
+                                "\"type\":\"Debit\",\"text\":\"Debit card purchase\"},{\"amount\":225.0,\"type\":" +
+                                "\"Debit\",\"text\":\"Rent payment\"},{\"amount\":125.0,\"type\":\"DEBIT\",\"text\":" +
+                                "\"Amazon.com\"},{\"amount\":500.0,\"type\":\"DEBIT\",\"text\":\"Car insurance\"}," +
+                                "{\"amount\":800.0,\"type\":\"CREDIT\",\"text\":\"Salary\"}]")));
     }
 }
